@@ -35,8 +35,8 @@ class PostViewController: UIViewController {
         
         didSet {
             
-//            contentTextView.layer.borderWidth = 0.5
-//            contentTextView.layer.borderColor = UIColor.lightGray.cgColor
+            contentTextView.layer.borderWidth = 0.5
+            contentTextView.layer.borderColor = UIColor.lightGray.cgColor
             contentTextView.layer.cornerRadius = 5
             contentTextView.layer.masksToBounds = true
         }
@@ -52,6 +52,8 @@ class PostViewController: UIViewController {
     
     var categoryArray = ["", "Beauty", "Gossiping", "IU"]
     
+    let firebase = FirebaseManager.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,6 +62,11 @@ class PostViewController: UIViewController {
     
     @IBAction func postButtonDidTap(_ sender: UIButton) {
         
+        firebase.addData(title: titleTextField.text ?? "",
+                         category: categoryTextField.text ?? "",
+                         content: contentTextView.text ?? "")
+        
+        dismiss(animated: true, completion: nil)
     }
     
     

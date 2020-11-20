@@ -17,12 +17,14 @@ class FirebaseManager {
     
     let db = Firestore.firestore()
     
+    var posts = [Post]()
+    
     
     // MARK: - Add data to Firestore
     
-    func addData(collectiontName: String) {
+    func addDataForTest() {
         
-        let articles = db.collection(collectiontName)
+        let articles = db.collection("articles")
         
         let document = articles.document()
         
@@ -59,34 +61,103 @@ class FirebaseManager {
         }
     }
     
+    func addData(title: String, category: String, content: String) {
+        
+        let articles = db.collection("articles")
+        
+        let document = articles.document()
+        
+        let data: [String: Any] = [
+            
+            "author": [
+                
+                "email": "princekili0422@gmail.com",
+                
+                "id": "princekili",
+                
+                "name": "Prince"
+                
+            ],
+            
+            "title": title,
+            
+            "content": content,
+            
+//            "createdTime": Date().timeIntervalSince1970,
+            "createdTime": FirebaseFirestore.FieldValue.serverTimestamp(),
+            
+            "id": document.documentID,
+            
+            "category": category
+            
+        ]
+        
+        document.setData(data) { (error) in
+            
+            if let error = error {
+                
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: - Get data from Firestore
     
-    func getDocuments(collectiontName: String) {
-        
-        db.collection(collectiontName)
-            .getDocuments() { (querySnapshot, error) in
-                
-                if let error = error {
-                    
-                    print("Error getting documents: \(error)")
-                    
-                } else {
-                    
-                    for document in querySnapshot!.documents {
-                        
-                        print("\(document.documentID) => \(document.data())")
-                    }
-                }
-                
-            }
-    }
+//    func getDocuments() {
+//        
+//        db.collection("articles")
+//            .order(by: "createdTime", descending: true)
+//            .getDocuments() { (querySnapshot, error) in
+//                
+//                if let error = error {
+//                    
+//                    print("Error getting documents: \(error)")
+//                    
+//                } else {
+//                    
+//                    guard let querySnapshot = querySnapshot else { return }
+//                    
+//                    for document in querySnapshot.documents {
+//                        
+//                        let data = document.data()
+//                        
+//                        let id = document.documentID
+//                        
+//                        print("\(id) => \(data)")
+//                        
+//                        let title = data["title"] as? String ?? "Untitled"
+//                        
+//                        let createdTime = "\(data["createdTime"] ?? "No timestamp")"
+//                        
+//                        let content = data["content"] as? String ?? "None"
+//                        
+//                        let category = data["category"] as? String ?? "All"
+//                        
+//                        let authorData = data["author"] as? [String: String] ?? ["": ""]
+//                        
+//                        let author = Author(email: authorData["email"] ?? "",
+//                                            id: authorData["id"] ?? "",
+//                                            name: authorData["name"] ?? "")
+//                        
+//                        let newPost = Post(author: author,
+//                                           title: title,
+//                                           content: content,
+//                                           createdTime: createdTime,
+//                                           id: id,
+//                                           category: category)
+//                        
+//                        self.posts.append(newPost)
+//                    }
+//                }
+//            }
+//    }
     
     
     // MARK: - Listen to Firestore
     
-    func listenToArticles(collectiontName: String) {
+    func listenToArticles() {
         
-        db.collection(collectiontName)
+        db.collection("articles")
             .addSnapshotListener { (documentSnapshot, error) in
                 
                 guard let documentSnapshot = documentSnapshot else {
@@ -112,4 +183,13 @@ class FirebaseManager {
                 }
             }
     }
+    
+    // MARK: - Read Firestore Timestamp
+    
+//    func readTimestamp(timestamp: FieldValue) {
+//
+//        FirebaseFirestore.FieldValue.serverTimestamp()
+//
+//        let date = Date(timeIntervalSince1970: )
+//    }
 }
